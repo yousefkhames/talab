@@ -1,5 +1,5 @@
 // Talab service worker: cache-first for app shell, network fallback.
-const CACHE = "talab-v2";
+const CACHE = "talab-v3";
 const SHELL = [
   "./",
   "./index.html",

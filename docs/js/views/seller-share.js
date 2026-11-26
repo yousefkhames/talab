@@ -77,6 +77,7 @@ export function renderSellerShare(body) {
       } catch {
         data = null;
       }
+      if (data && !window.confirm(tr("confirmRestore"))) return;
       const result = data ? store.importShop(data) : { ok: false };
       toast(tr(result.ok ? "importOk" : "importBad"));
       if (result.ok) setTimeout(() => location.reload(), 600);

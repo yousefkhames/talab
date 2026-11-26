@@ -136,6 +136,8 @@ export const DICT = {
     dangerZone: "Danger zone",
     resetDemo: "Reload demo data",
     eraseAll: "Erase everything",
+    confirmRestore: "Replace this shop with the imported file?",
+    storageFull: "Could not save: browser storage is full or blocked.",
     confirmErase: "This deletes products, orders and settings in this browser. Sure?",
 
     // setup banner (seller has no WhatsApp yet)
@@ -281,6 +283,8 @@ export const DICT = {
     dangerZone: "منطقة الخطر",
     resetDemo: "رجّع البيانات التجريبية",
     eraseAll: "امسح كل حاجة",
+    confirmRestore: "استبدال المتجر الحالي بالملف المستورد؟",
+    storageFull: "تعذر الحفظ: مساحة المتصفح ممتلئة أو محجوبة.",
     confirmErase: "ده هيمسح المنتجات والطلبات والإعدادات من المتصفح ده. متأكد؟",
 
     // setup banner

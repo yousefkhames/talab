@@ -48,7 +48,11 @@ function read(storage, key, fallback) {
 }
 
 function write(storage, key, value) {
-  storage.setItem(key, JSON.stringify(value));
+  try {
+    storage.setItem(key, JSON.stringify(value));
+  } catch {
+    if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("talab:storage-failed"));
+  }
 }
 
 export function sanitizeSettings(input, base = defaultSettings()) {

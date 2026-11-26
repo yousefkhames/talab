@@ -58,3 +58,8 @@ Node unit tests cover money formatting, Egyptian phone normalization, cart math,
 
 ## License
 MIT, see [LICENSE](LICENSE).
+
+## Round 2 review notes
+- Importing a shop file now asks before replacing the current shop; a full or blocked browser storage shows a message instead of failing silently.
+- Already solid in review: settings sanitiser, local 01x numbers get the country code, copy fallback, empty states.
+- Limit: WhatsApp links are only verified as generated wa.me URLs.
