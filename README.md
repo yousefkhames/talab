@@ -10,6 +10,15 @@
 
 Demo product photos are AI-generated samples, not real products.
 
+## Screenshots
+
+Captured from the live site (https://yousefkhames.github.io/talab/).
+
+<p>
+  <img src="docs/screenshots/live-desktop.png" alt="talab desktop view" width="640">
+  <img src="docs/screenshots/live-mobile.png" alt="talab mobile view" width="200">
+</p>
+
 ## Why
 Thousands of small sellers run their whole business in Instagram DMs: "price?", "available?", "send your address." Talab gives a seller a tiny shop they can set up in minutes on their phone. Customers browse a clean catalog, fill a short form, and tap one button — the full order opens in the seller's WhatsApp, ready to send. No account, no commission, no payment gateway.
 
