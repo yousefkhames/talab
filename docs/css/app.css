@@ -53,10 +53,8 @@ button { cursor: pointer; }
   color: #fff;
   padding: 0.5rem 1rem;
   z-index: 100;
-  border-radius: 0 0 12px 0;
 }
-[dir="ltr"] .skip-link { border-radius: 0 0 0 12px; inset-inline-start: auto; inset-inline-end: -9999px; }
-.skip-link:focus { inset-inline-start: 0; inset-inline-end: auto; }
+.skip-link:focus { inset-inline-start: 0; }
 
 /* ---------- header ---------- */
 
