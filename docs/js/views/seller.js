@@ -121,11 +121,11 @@ function productForm(p) {
       <div class="field-row">
         <div class="field" id="pf-f-price">
           <label for="pf-price">${esc(tr("productPrice"))}</label>
-          <input type="text" inputmode="decimal" id="pf-price" value="${p ? p.price : ""}">
+          <input type="text" inputmode="decimal" id="pf-price" dir="ltr" value="${p ? p.price : ""}">
         </div>
         <div class="field">
           <label for="pf-compare">${esc(tr("comparePrice"))}</label>
-          <input type="text" inputmode="decimal" id="pf-compare" value="${p?.compareAt ?? ""}">
+          <input type="text" inputmode="decimal" id="pf-compare" dir="ltr" value="${p?.compareAt ?? ""}">
         </div>
       </div>
       <div class="field">

@@ -70,7 +70,7 @@ export function renderSellerSettings(body) {
         </div>
         <div class="field">
           <label for="s-fee">${esc(tr("deliveryFee"))}</label>
-          <input type="text" inputmode="decimal" id="s-fee" value="${s.deliveryFee}">
+          <input type="text" inputmode="decimal" id="s-fee" dir="ltr" value="${s.deliveryFee}">
         </div>
       </div>
 

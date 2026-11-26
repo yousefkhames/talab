@@ -33,6 +33,10 @@ export function defaultSettings() {
   };
 }
 
+function oneLine(v) {
+  return String(v ?? "").replace(/\s*\n+\s*/g, " / ");
+}
+
 function read(storage, key, fallback) {
   try {
     const raw = storage.getItem(key);
@@ -178,10 +182,10 @@ export function createStore(storage) {
         created: Date.now(),
         lang,
         customer: {
-          name: clampText(customer?.name, 60),
-          phone: clampText(customer?.phone, 30),
-          address: clampText(customer?.address, 200),
-          notes: clampText(customer?.notes, 300),
+          name: clampText(oneLine(customer?.name), 60),
+          phone: clampText(oneLine(customer?.phone), 30),
+          address: clampText(oneLine(customer?.address), 200),
+          notes: clampText(oneLine(customer?.notes), 300),
         },
         items: lines.map((l) => ({ id: l.product.id, name: l.product.name, price: l.product.price, qty: l.qty })),
         subtotal: totals.subtotal,
