@@ -1,5 +1,5 @@
 // Talab service worker: cache-first for app shell, network fallback.
-const CACHE = "talab-v1";
+const CACHE = "talab-v2";
 const SHELL = [
   "./",
   "./index.html",
@@ -16,6 +16,15 @@ const SHELL = [
   "./js/views/seller-orders.js",
   "./js/views/seller-settings.js",
   "./js/views/seller-share.js",
+  "./fonts/Cairo-arabic-400.woff2",
+  "./fonts/Cairo-arabic-600.woff2",
+  "./fonts/Cairo-arabic-700.woff2",
+  "./fonts/Cairo-arabic-800.woff2",
+  "./fonts/Cairo-latin-400.woff2",
+  "./fonts/Cairo-latin-600.woff2",
+  "./fonts/Cairo-latin-700.woff2",
+  "./fonts/Cairo-latin-800.woff2",
+  "./fonts/fonts.css",
   "./assets/logo.svg",
   "./manifest.webmanifest",
 ];

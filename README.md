@@ -54,6 +54,7 @@ Node unit tests cover money formatting, Egyptian phone normalization, cart math,
 - The seller dashboard has no password. Anyone who opens the link can edit the shop in their own browser — edits do not affect other visitors, because there is no shared server. A real multi-user shop needs a backend.
 - Order history in the dashboard shows only orders placed in that same browser.
 - No payments, no shipping integration, no inventory sync.
+- The Cairo font is bundled in `docs/fonts/`, so the shop makes no third-party requests.
 
 ## License
 MIT, see [LICENSE](LICENSE).
