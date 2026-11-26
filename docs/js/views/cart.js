@@ -144,16 +144,15 @@ export function renderCart(main) {
     e.preventDefault();
     const customer = readCustomer();
     if (!validate(customer)) return;
+    if (!isValidWhatsApp(s.whatsapp)) {
+      // No seller number yet: do not record a phantom order, tell the user inline.
+      toast(tr("whatsappNotSet"));
+      return;
+    }
     const order = placeOrder(customer);
     const msg = buildOrderMessage({ shopName: s.shopName, order, settings: s, lang: ui.lang });
-    if (isValidWhatsApp(s.whatsapp)) {
-      window.open(waLink(s.whatsapp, msg), "_blank", "noopener");
-      renderSuccess(main, order);
-    } else {
-      copyText(msg);
-      toast(tr("copied"));
-      alert(tr("whatsappNotSet"));
-    }
+    window.open(waLink(s.whatsapp, msg), "_blank", "noopener");
+    renderSuccess(main, order);
   });
 
   formEl.querySelector("#copy-order").addEventListener("click", () => {
