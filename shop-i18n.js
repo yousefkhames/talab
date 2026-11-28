@@ -1,0 +1,47 @@
+/* MIT · Copyright (c) 2026 Yousef Khames · shared storefront strings as [Arabic, English]. */
+(function (root) {
+  'use strict';
+  Object.assign(root.Kit.dict, {
+    shop: ['المتجر', 'Shop'], saved: ['المفضلة', 'Saved'], owner: ['صاحب المتجر', 'Owner'], lang: ['EN', 'عربي'],
+    demoBanner: ['متجر تجريبي: المنتجات والأسعار عينات وهمية.', 'Demo shop: products and prices are fictional samples.'], demoTag: ['تجريبي', 'Demo'],
+    draftBanner: ['معاينة المسودة على هذا الجهاز فقط. الزوار لا يرونها قبل النشر.', 'Draft preview on this device only. Visitors do not see it until you publish.'],
+    search: ['ابحث', 'Search'], all: ['الكل', 'All'], noProducts: ['لا توجد منتجات.', 'No products.'], noSaved: ['لا توجد منتجات محفوظة.', 'No saved products.'],
+    noPrice: ['اسأل عن السعر', 'Ask for the price'], soldOut: ['غير متوفر', 'Out of stock'], isNew: ['جديد', 'New'],
+    size: ['المقاس', 'Size'], color: ['اللون', 'Colour'], anySize: ['كل المقاسات', 'Any size'], anyColor: ['كل الألوان', 'Any colour'],
+    sort: ['الترتيب', 'Sort'], sortDef: ['الافتراضي', 'Default'], sortLow: ['الأقل سعرًا', 'Price low to high'], sortHigh: ['الأعلى سعرًا', 'Price high to low'],
+    maxPrice: ['أقصى سعر', 'Max price'], inStockOnly: ['المتوفر فقط', 'In stock only'], pickVariant: ['اختر المقاس واللون', 'Pick size and colour'],
+    add: ['أضف إلى الحقيبة', 'Add to bag'], added: ['تمت الإضافة', 'Added'], back: ['رجوع', 'Back'], wish: ['حفظ', 'Save'], unwish: ['إزالة من المحفوظ', 'Remove from saved'],
+    sizeGuide: ['دليل المقاسات', 'Size guide'], sizeGuideDemo: ['جدول تجريبي: استبدله بقياسات متجرك.', 'Demo table: replace with your own measurements.'], sizeGuideNone: ['لم يضف المتجر دليل مقاسات.', 'The shop has not added a size guide.'],
+    share: ['مشاركة المنتج', 'Share product'], linkCopied: ['تم نسخ الرابط', 'Link copied'],
+    bag: ['الحقيبة', 'Bag'], bagEmpty: ['الحقيبة فارغة.', 'Your bag is empty.'], items: ['{n} قطعة', '{n} items'], total: ['الإجمالي حسب أسعار المتجر', 'Total (shop prices)'],
+    totalNote: ['لا شحن ولا ضرائب ولا دفع هنا. المتجر يؤكد السعر النهائي.', 'No shipping, tax or payment here. The shop confirms the final price.'], priceCheck: ['بعض المنتجات بدون سعر. اسأل المتجر.', 'Some items have no price. Ask the shop.'],
+    yourName: ['اسمك (اختياري)', 'Your name (optional)'], orderNote: ['ملاحظة (اختياري)', 'Note (optional)'], remove: ['حذف', 'Remove'], dropped: ['أُزيلت منتجات لم تعد متوفرة.', 'Items no longer available were removed.'],
+    orderWa: ['جهّز الطلب في واتساب', 'Prepare order in WhatsApp'], orderMsg: ['افتح محادثة ماسنجر ثم الصق الطلب', 'Open Messenger, then paste the order'], copy: ['انسخ الطلب', 'Copy order'], copied: ['تم النسخ', 'Copied'],
+    howSend: ['فتح واتساب يجهّز مسودة فقط. اضغط إرسال بنفسك. الطلب غير مؤكد حتى يرد المتجر.', 'Opening WhatsApp only prepares a draft. Press send yourself. The order is not confirmed until the shop replies.'],
+    howMsg: ['ماسنجر لا يقبل نصًا جاهزًا: انسخ الطلب ثم الصقه في المحادثة وأرسله بنفسك.', 'Messenger cannot take prefilled text: copy the order, paste it into the chat and send it yourself.'],
+    noWa: ['رقم واتساب المتجر غير مضبوط. انسخ الطلب وأرسله يدويًا.', 'The shop WhatsApp number is not set. Copy the order and send it yourself.'],
+    longMsg: ['الرسالة طويلة جدًا لرابط واتساب. انسخها وأرسلها يدويًا.', 'The message is too long for a WhatsApp link. Copy it and send it yourself.'],
+    close: ['إغلاق', 'Close'], clearBag: ['فرّغ الحقيبة', 'Clear bag'], qrTitle: ['كود QR للمتجر', 'Shop QR code'], qrUrl: ['رابط المتجر المنشور', 'Published shop link'],
+    print: ['طباعة', 'Print'], qrLocal: ['هذا الرابط محلي ولن يعمل للزوار.', 'This is a local link and will not work for visitors.'], scan: ['امسح لزيارة المتجر', 'Scan to visit the shop'],
+    /* owner builder */
+    publishHelp: ['للنشر: صدّر catalog-data.js، استبدل الملف في المستودع، ثم ارفعه. التعديلات هنا محلية ولا تظهر للزوار.', 'To publish: export catalog-data.js, replace the file in the repository and commit. Edits here are local and visitors do not see them.'],
+    blocked: ['بيانات المسودة غير قابلة للقراءة ولن يتم الكتابة فوقها حتى تمسحها.', 'Stored draft is unreadable and will not be overwritten until you reset it.'],
+    shopAr: ['اسم المتجر بالعربية', 'Shop name (Arabic)'], shopEn: ['اسم المتجر بالإنجليزية', 'Shop name (English)'], aboutAr: ['نبذة (عربي)', 'About (Arabic)'], aboutEn: ['نبذة (إنجليزي)', 'About (English)'],
+    currency: ['العملة', 'Currency label'], waNumber: ['رقم واتساب المتجر (علني)', 'Shop WhatsApp number (public)'], igHandle: ['حساب إنستغرام', 'Instagram handle'], fbHandle: ['صفحة فيسبوك', 'Facebook page name'],
+    ttHandle: ['حساب تيك توك', 'TikTok handle'], msHandle: ['صفحة ماسنجر (اسم المستخدم)', 'Messenger page username'],
+    categories: ['الأقسام', 'Categories'], addCat: ['إضافة قسم', 'Add category'], catAr: ['اسم القسم (عربي)', 'Category (Arabic)'], catEn: ['اسم القسم (إنجليزي)', 'Category (English)'],
+    products: ['المنتجات', 'Products'], addProduct: ['إضافة منتج', 'Add product'], editProduct: ['تعديل المنتج', 'Edit product'],
+    nameAr: ['الاسم (عربي)', 'Name (Arabic)'], nameEn: ['الاسم (إنجليزي)', 'Name (English)'], descAr: ['الوصف (عربي)', 'Description (Arabic)'], descEn: ['الوصف (إنجليزي)', 'Description (English)'],
+    priceF: ['السعر', 'Price'], compareF: ['السعر قبل الخصم (اختياري)', 'Price before discount (optional)'], category: ['القسم', 'Category'], noCat: ['بدون قسم', 'No category'],
+    sizesF: ['المقاسات (مفصولة بفاصلة)', 'Sizes (comma separated)'], colorsF: ['الألوان (مفصولة بفاصلة)', 'Colours (comma separated)'], outF: ['غير متوفر من التوليفات', 'Out-of-stock combinations'],
+    soldOutF: ['المنتج كله غير متوفر', 'Whole product out of stock'], newF: ['علامة جديد', 'Mark as new'], photo: ['صورة (اختياري)', 'Photo (optional)'], removePhoto: ['إزالة الصورة', 'Remove photo'],
+    save: ['حفظ', 'Save'], cancel: ['إلغاء', 'Cancel'], del: ['حذف', 'Delete'], up: ['أعلى', 'Up'], down: ['أسفل', 'Down'], confirmDel: ['حذف هذا العنصر؟', 'Delete this entry?'],
+    needName: ['اكتب اسم المنتج بإحدى اللغتين', 'Enter a product name in at least one language'], savedMsg: ['تم الحفظ على هذا الجهاز', 'Saved on this device'],
+    statsLine: ['{c} قسم، {p} منتج، {s} غير متوفر، {n} بدون سعر', '{c} categories, {p} products, {s} out of stock, {n} without price'],
+    exportData: ['تصدير catalog-data.js للنشر', 'Export catalog-data.js to publish'], exportJson: ['نسخة JSON احتياطية', 'Export JSON backup'], importJson: ['استيراد JSON', 'Import JSON'],
+    importOk: ['تم الاستيراد', 'Imported'], importFail: ['ملف غير صالح', 'Invalid file'], importNewer: ['الملف من إصدار أحدث', 'File is from a newer version'],
+    clearDemo: ['حذف المنتجات التجريبية', 'Clear demo products'], resetAll: ['مسح المسودة', 'Discard draft'], confirmReset: ['سيتم مسح المسودة على هذا الجهاز. متابعة؟', 'This discards the draft on this device. Continue?'],
+    guideRows: ['دليل المقاسات (مقاس | ملاحظة)', 'Size guide (size | note)'], guideSize: ['المقاس', 'Size'], guideNoteAr: ['الملاحظة (عربي)', 'Note (Arabic)'], guideNoteEn: ['الملاحظة (إنجليزي)', 'Note (English)'], addRow: ['إضافة صف', 'Add row'],
+    preview: ['معاينة المسودة', 'Preview draft'], qr: ['QR', 'QR']
+  });
+})(globalThis);

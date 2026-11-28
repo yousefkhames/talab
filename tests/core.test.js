@@ -1,222 +1,40 @@
-// Talab unit tests — run with: node --test tests/
-import { test } from "node:test";
-import assert from "node:assert/strict";
-
-import {
-  escapeHtml,
-  formatMoney,
-  isHexColor,
-  isValidWhatsApp,
-  normalizeWhatsApp,
-  parsePrice,
-} from "../docs/js/core/format.js";
-import { buildOrderMessage, waLink } from "../docs/js/core/whatsapp.js";
-import { createStore, defaultSettings, sanitizeProduct, sanitizeSettings } from "../docs/js/core/store.js";
-import { DICT, dirFor, missingKeys, t } from "../docs/js/core/i18n.js";
-
-function memStorage() {
-  const m = new Map();
-  return {
-    getItem: (k) => (m.has(k) ? m.get(k) : null),
-    setItem: (k, v) => m.set(k, String(v)),
-    removeItem: (k) => m.delete(k),
-  };
-}
-
-// ---------- format ----------
-
-test("parsePrice handles latin, commas and Arabic-Indic digits", () => {
-  assert.equal(parsePrice("250"), 250);
-  assert.equal(parsePrice("1,250.50"), 1250.5);
-  assert.equal(parsePrice("٢٥٠"), 250);
-  assert.equal(parsePrice("abc"), null);
-  assert.equal(parsePrice(""), null);
-  assert.equal(parsePrice("12.9"), 12.9);
+const test = require('node:test'), assert = require('node:assert/strict'), fs = require('fs'), path = require('path');
+const S = require('../shop-core.js');
+const raw = new Function('window', fs.readFileSync(path.join(__dirname, '../catalog-data.js'), 'utf8') + ';return window.CATALOG_DATA')({});
+const c = S.normalize(raw);
+test('demo catalog is flagged and every product is demo', () => { assert.equal(c.demo, true); assert.ok(c.products.length >= 4); assert.ok(c.products.every((p) => p.demo)); assert.equal(c.whatsapp, ''); });
+test('normalize rejects bad images, prices and handles', () => {
+  const n = S.normalize({ social: { instagram: 'a b<', facebook: '@ok.page' }, categories: [], products: [{ id: 'x y', name: { en: 'X' }, price: -1, img: 'javascript:alert(1)' }, { id: 'z', img: 'img/a.jpg', price: '12.5' }] });
+  assert.equal(n.social.instagram, ''); assert.equal(n.social.facebook, 'ok.page'); assert.equal(n.products[0].id, 'xy'); assert.equal(n.products[0].price, null); assert.equal(n.products[0].img, ''); assert.equal(n.products[1].img, 'img/a.jpg'); assert.equal(n.products[1].price, 12.5);
 });
-
-test("formatMoney uses the shop symbol and latin digits", () => {
-  const s = { currencySymbol: "ج.م" };
-  assert.equal(formatMoney(250, s, "ar"), "250 ج.م");
-  assert.equal(formatMoney(1250.5, s, "en"), "1,250.5 ج.م");
-  assert.equal(formatMoney(NaN, s, "en"), "");
+test('variants and stock', () => {
+  const p = S.normalize({ products: [{ id: 'a', sizes: 'S, M', colors: ['red'], out: ['S|red'] }] }).products[0];
+  assert.equal(S.combos(p).length, 2); assert.equal(S.available(p, 'S', 'red'), false); assert.equal(S.available(p, 'M', 'red'), true); assert.equal(S.hasStock(p), true);
+  assert.equal(S.hasStock(Object.assign({}, p, { soldOut: true })), false);
 });
-
-test("normalizeWhatsApp converts Egyptian local numbers", () => {
-  assert.equal(normalizeWhatsApp("01012345678", "20"), "201012345678");
-  assert.equal(normalizeWhatsApp("+20 101 234 5678", "20"), "201012345678");
-  assert.equal(normalizeWhatsApp("00201012345678", "20"), "201012345678");
-  assert.equal(normalizeWhatsApp("١٠١٢٣٤٥٦٧٨", "20"), "201012345678");
-  assert.equal(normalizeWhatsApp("1012345678", "20"), "201012345678");
+test('filters by category, text, size, price, stock, wishlist and sort', () => {
+  const first = c.categories[0].id; assert.ok(S.visible(c, { cat: first }).every((p) => p.cat === first));
+  assert.equal(S.visible(c, { q: 'zzzz' }).length, 0); assert.ok(S.visible(c, { max: 200 }).every((p) => p.price <= 200));
+  assert.ok(S.visible(c, { inStock: true }).every(S.hasStock)); assert.equal(S.visible(c, { wish: [c.products[0].id] }).length, 1);
+  const low = S.visible(c, { sort: 'low' }).map((p) => p.price); assert.deepEqual(low, low.slice().sort((a, b) => a - b));
 });
-
-test("isValidWhatsApp bounds length", () => {
-  assert.ok(isValidWhatsApp("201012345678"));
-  assert.ok(!isValidWhatsApp("123"));
-  assert.ok(!isValidWhatsApp("1".repeat(16)));
-  assert.ok(!isValidWhatsApp("20abc123456"));
+test('cart merges lines, clamps, totals and prunes unavailable items', () => {
+  const p = c.products[0]; let cart = S.addLine([], p.id, '', '', 2); cart = S.addLine(cart, p.id, '', '', 200); assert.equal(cart.length, 1); assert.equal(cart[0].qty, 99);
+  assert.equal(S.totals(c, cart).total, p.price * 99); cart = S.setQty(cart, cart[0].k, 0); assert.equal(cart.length, 0);
+  const sold = c.products.find((x) => !S.hasStock(x)); if (sold) assert.equal(S.prune(c, S.addLine([], sold.id, '', '', 1)).length, 0);
 });
-
-test("escapeHtml escapes markup", () => {
-  assert.equal(escapeHtml('<b>"x"</b>'), "&lt;b&gt;&quot;x&quot;&lt;/b&gt;");
+test('order text has demo tag, lines and total in both languages', () => {
+  const p = c.products.find((x) => S.hasStock(x) && !x.sizes.length) || c.products[0]; const cart = S.addLine([], p.id, p.sizes[0] || '', p.colors[0] || '', 2);
+  const ar = S.orderText(c, cart, 'ar', { shop: 'م', name: 'سارة' }), en = S.orderText(c, cart, 'en', { note: 'hi' });
+  assert.match(ar, /\[طلب تجريبي\]/); assert.match(ar, /2 ×/); assert.match(ar, /الاسم: سارة/); assert.match(en, /\[DEMO order\]/); assert.match(en, /Note: hi/);
 });
-
-test("isHexColor", () => {
-  assert.ok(isHexColor("#0e7a5f"));
-  assert.ok(isHexColor("#fff"));
-  assert.ok(!isHexColor("red"));
-  assert.ok(!isHexColor("#12345"));
+test('social links only for valid handles; product url', () => {
+  const n = S.normalize({ social: { instagram: 'shop.demo', messenger: 'demopage' } }); assert.deepEqual(S.social(n).map((x) => x.id), ['instagram', 'messenger']);
+  assert.equal(S.productUrl('https://x.io/talab/#/p/a', 'b'), 'https://x.io/talab/#/p/b');
 });
-
-// ---------- whatsapp message ----------
-
-test("buildOrderMessage contains items, total and customer", () => {
-  const settings = defaultSettings();
-  const order = {
-    id: "TLB-ABC123",
-    items: [
-      { name: "تيشيرت", price: 250, qty: 2 },
-      { name: "كاب", price: 180, qty: 1 },
-    ],
-    subtotal: 680,
-    delivery: 50,
-    total: 730,
-    customer: { name: "يوسف", phone: "01012345678", address: "اسكندرية", notes: "" },
-  };
-  const msg = buildOrderMessage({ shopName: "لمسة", order, settings, lang: "ar" });
-  assert.ok(msg.includes("لمسة"));
-  assert.ok(msg.includes("تيشيرت"));
-  assert.ok(msg.includes("730"));
-  assert.ok(msg.includes("يوسف"));
-  assert.ok(msg.includes("TLB-ABC123"));
-  assert.ok(!msg.includes("undefined"));
+test('export file round-trips and escapes script closers', () => {
+  const m = S.normalize(raw); m.shop.en = '</script>'; const js = S.toDataJs(m); assert.ok(!js.includes('</script>'));
+  assert.equal(S.normalize(new Function('window', js + ';return window.CATALOG_DATA')({})).shop.en, '</script>');
 });
-
-test("buildOrderMessage english + free delivery", () => {
-  const settings = { ...defaultSettings(), currencySymbol: "EGP" };
-  const order = {
-    id: "TLB-X",
-    items: [{ name: "Mug", price: 150, qty: 1 }],
-    subtotal: 150,
-    delivery: 0,
-    total: 150,
-    customer: { name: "Sam" },
-  };
-  const msg = buildOrderMessage({ shopName: "Shop", order, settings, lang: "en" });
-  assert.ok(msg.includes("New order"));
-  assert.ok(msg.includes("Free"));
-  assert.ok(msg.includes("150 EGP"));
-});
-
-test("waLink encodes the message", () => {
-  const link = waLink("201012345678", "مرحبا\nبالعالم");
-  assert.ok(link.startsWith("https://wa.me/201012345678?text="));
-  assert.ok(link.includes(encodeURIComponent("مرحبا")));
-  assert.ok(!link.includes("\n"));
-});
-
-// ---------- i18n ----------
-
-test("ar and en dictionaries have key parity", () => {
-  const { missingInAr, missingInEn } = missingKeys();
-  assert.deepEqual(missingInAr, []);
-  assert.deepEqual(missingInEn, []);
-});
-
-test("t() falls back and interpolates", () => {
-  assert.equal(t("ar", "total"), "الإجمالي");
-  assert.equal(t("en", "total"), "Total");
-  assert.equal(t("fr", "total"), "Total");
-  assert.equal(t("en", "no-such-key"), "no-such-key");
-  assert.equal(dirFor("ar"), "rtl");
-  assert.equal(dirFor("en"), "ltr");
-  for (const lang of ["ar", "en"]) {
-    for (const v of Object.values(DICT[lang])) {
-      assert.ok(!v.includes("undefined"), `undefined in ${lang} string`);
-    }
-  }
-});
-
-// ---------- store ----------
-
-test("settings sanitize fixes junk and normalizes whatsapp", () => {
-  const s = sanitizeSettings({
-    shopName: "  محل  ",
-    whatsapp: "010 1234 5678",
-    countryCode: "20",
-    primary: "not-a-color",
-    deliveryFee: -5,
-    lang: "de",
-  });
-  assert.equal(s.shopName, "محل");
-  assert.equal(s.whatsapp, "201012345678");
-  assert.equal(s.primary, defaultSettings().primary);
-  assert.equal(s.deliveryFee, 0);
-  assert.equal(s.lang, "ar");
-});
-
-test("products sanitize clamps and defaults", () => {
-  const p = sanitizeProduct({ name: "x".repeat(200), price: "abc", inStock: false });
-  assert.equal(p.name.length, 80);
-  assert.equal(p.price, 0);
-  assert.equal(p.inStock, false);
-  assert.ok(p.id);
-});
-
-test("cart math and totals with delivery fee", () => {
-  const store = createStore(memStorage());
-  store.saveSettings({ ...defaultSettings(), deliveryFee: 30 });
-  const a = store.upsertProduct({ name: "A", price: 100 });
-  const b = store.upsertProduct({ name: "B", price: 50.5 });
-  store.addToCart(a.id, 2);
-  store.addToCart(b.id, 1);
-  store.addToCart(a.id, 1);
-  assert.equal(store.cartCount(), 4);
-  const totals = store.cartTotals();
-  assert.equal(totals.subtotal, 350.5);
-  assert.equal(totals.delivery, 30);
-  assert.equal(totals.total, 380.5);
-  store.setQty(a.id, 0);
-  assert.equal(store.cartCount(), 1);
-  assert.equal(store.cartTotals().total, 80.5);
-});
-
-test("cart lines drop deleted products", () => {
-  const store = createStore(memStorage());
-  const a = store.upsertProduct({ name: "A", price: 10 });
-  store.addToCart(a.id, 3);
-  store.deleteProduct(a.id);
-  assert.equal(store.cartLines().length, 0);
-  assert.equal(store.cartTotals().total, 0);
-});
-
-test("order captures cart snapshot and clamps customer text", () => {
-  const store = createStore(memStorage());
-  store.saveSettings({ ...defaultSettings(), deliveryFee: 10 });
-  const a = store.upsertProduct({ name: "A", price: 20 });
-  store.addToCart(a.id, 2);
-  const order = store.addOrder({ customer: { name: " نور ".repeat(40), phone: "010" }, lang: "ar" });
-  assert.equal(order.items[0].qty, 2);
-  assert.equal(order.total, 50);
-  assert.ok(order.customer.name.length <= 60);
-  assert.match(order.id, /^TLB-[A-Z2-9]{6}$/);
-  store.setOrderStatus(order.id, "done");
-  assert.equal(store.getOrders()[0].status, "done");
-});
-
-test("export/import round trip preserves shop and rejects junk", () => {
-  const a = createStore(memStorage());
-  a.saveSettings({ ...defaultSettings(), shopName: "محل نور", whatsapp: "01012345678" });
-  a.upsertProduct({ name: "فستان", price: 800, category: "ملابس" });
-  const data = a.exportShop();
-
-  const b = createStore(memStorage());
-  const result = b.importShop(JSON.parse(JSON.stringify(data)));
-  assert.ok(result.ok);
-  assert.equal(b.getSettings().shopName, "محل نور");
-  assert.equal(b.getSettings().whatsapp, "201012345678");
-  assert.equal(b.getProducts()[0].name, "فستان");
-
-  assert.ok(!b.validateImport({ app: "other" }).ok);
-  assert.ok(!b.validateImport(null).ok);
-  assert.ok(!b.validateImport({ app: "talab", products: "nope" }).ok);
-});
+test('clear demo removes only demo products', () => { const m = S.normalize(Object.assign({}, raw, { products: raw.products.concat([{ id: 'real', name: { en: 'R' }, price: 5 }]) })); const n = S.clearDemo(m); assert.equal(n.products.length, 1); assert.equal(n.demo, false); });
+test('demo art placeholder is a labelled data URI', () => { assert.match(decodeURIComponent(S.art(c.products[0])), /DEMO/); });

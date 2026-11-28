@@ -1,74 +1,51 @@
-# Talab | طلب
+# talab · طلب
 
-**A mini storefront for Instagram and Facebook sellers. Share one link; orders land in your WhatsApp.** Free, no server, no sign-up. Arabic and English.
+A white-label mini storefront for sellers who sell through Instagram and Facebook: a profile header with social links, a single-column product feed, a page and share link for every product, QR code, and order drafts through WhatsApp or Messenger. Arabic RTL and English LTR. Static HTML, CSS and JavaScript; no build, account, API or payment processor.
 
-**Live demo:** https://yousefkhames.github.io/talab/
+<div lang="ar" dir="rtl">متجر مصغر لبائعي إنستغرام وفيسبوك. صفحة تعريف، منتجات، رابط لكل منتج، وطلب عبر واتساب أو ماسنجر. لا يوجد دفع داخل الأداة.</div>
 
-| Storefront (Arabic) | Cart & checkout | Seller dashboard |
-|---|---|---|
-| ![Storefront](docs/screenshot-storefront-ar.png) | ![Checkout](docs/screenshot-checkout.png) | ![Seller dashboard](docs/screenshot-seller.png) |
+<img src="assets/yk-logo.svg" width="24" height="24" alt=""> **By Yousef Khames · من تطوير يوسف خميس**
 
-Demo product photos are AI-generated samples, not real products.
+## Preview locally
 
-## Screenshots
-
-Captured from the live site (https://yousefkhames.github.io/talab/).
-
-<p>
-  <img src="docs/screenshots/live-desktop.png" alt="talab desktop view" width="640">
-  <img src="docs/screenshots/live-mobile.png" alt="talab mobile view" width="200">
-</p>
-
-## Why
-Thousands of small sellers run their whole business in Instagram DMs: "price?", "available?", "send your address." Talab gives a seller a tiny shop they can set up in minutes on their phone. Customers browse a clean catalog, fill a short form, and tap one button — the full order opens in the seller's WhatsApp, ready to send. No account, no commission, no payment gateway.
-
-## Features
-- Storefront: product grid, search, category chips, product pages, sold-out state, old-price strikethrough
-- Cart with quantity steppers, delivery fee, live totals
-- Checkout form (name, phone, address, notes — fields toggleable) with validation
-- Order is composed into a neat WhatsApp message and opened via `wa.me`; copy-to-clipboard fallback
-- Seller dashboard on the same link: product CRUD with photos, stock toggle, order list, settings, share
-- White-label settings: shop name, tagline, logo, WhatsApp number, country code, currency code and symbol, colors, default language, delivery fee, checkout fields, Instagram/Facebook links
-- One-file export/import (JSON) of the whole shop: backup, move devices, or hand a ready-made setup to another shop
-- Product photos resized on-device (max ~900 px) and stored locally
-- Arabic RTL and English LTR, instant toggle, Egyptian-arabic UI copy
-- Egyptian phone numbers like `01012345678` are converted to international format automatically
-- Installable PWA, works offline after first load (service worker)
-- Accessible basics: labels, focus rings, skip link, reduced motion
-- Unit and smoke tests (`npm test`)
-
-## Privacy
-No server, no account, no analytics. Everything lives in the browser's localStorage. An order only leaves the device when the customer taps send in WhatsApp.
-
-## Tech stack
-Plain HTML, CSS and JavaScript (ES modules). No framework and no build step. localStorage for data, canvas for photo resizing, `wa.me` deep links for orders, a service worker for offline.
-
-## Run it
+```sh
+python3 -m http.server 8080 --bind 127.0.0.1
 ```
-git clone https://github.com/yousefkhames/talab
-cd talab/docs
-python3 -m http.server 8000
-```
-Open http://localhost:8000. The site is served from `docs/` by GitHub Pages.
+
+Open `http://localhost:8080/`. Use a fresh browser profile. The sample shop is **demo content**: fictional products and prices, a Demo banner, a Demo tag on every product and labelled placeholder images. No WhatsApp number is set, so the order screen offers **Copy order** only. Screenshots in `docs/` use this demo data.
+
+## Set up a shop
+
+1. Open **Owner** (`#/edit`). Set the shop name, about text, currency, the public WhatsApp number and your Instagram, Facebook, TikTok and Messenger handles. Only public business handles belong here.
+2. Press **Clear demo products**, then add your products with a photo, price and short description.
+3. Press **Export catalog-data.js**, replace `catalog-data.js` in the repository with the downloaded file, commit and publish. Owner edits are a local draft; visitors see the published file only.
+4. Each product has its own link (`#/p/<id>`) and a Share button. Put the shop link in your bio and use the **QR** tab to print a code.
+5. Orders: with a WhatsApp number the customer gets a WhatsApp draft. With a Messenger username the customer gets a button that opens your Messenger chat and copies the order; Messenger cannot take prefilled text, so they paste and send it themselves.
+
+Static theming: edit `assets/kit-theme.js` (`name`, `logo`, `accent`, `mode`, `light`, `dark`). Keep `assets/yk-logo.svg` and `assets/favicon.svg` for the developer credit. The shared storefront engine (`shop-core.js`, `shop-ui.js`) is the same across the talab, mahal and lebs kits.
+
+## Deploy (GitHub Pages)
+
+Create the repository `yousefkhames/talab`, commit these files to `main`, then Settings → Pages → Deploy from a branch → `main` / root. Live at `https://yousefkhames.github.io/talab/`. All paths are relative.
 
 ## Tests
-```
+
+```sh
+npm run test:unit  # Node 22+, no install
+npm run test:e2e   # headless Chrome as google-chrome
 npm test
 ```
-Node unit tests cover money formatting, Egyptian phone normalization, cart math, order snapshot, WhatsApp message building, export/import validation, and Arabic/English dictionary parity; smoke tests check that every file the app references exists.
 
-## Honest limits
-- Orders are not confirmed until the seller replies on WhatsApp. Talab sends no data anywhere by itself.
-- Data stays in one browser on one device. Clearing site data deletes the shop. Use the export file as a backup.
-- The seller dashboard has no password. Anyone who opens the link can edit the shop in their own browser — edits do not affect other visitors, because there is no shared server. A real multi-user shop needs a backend.
-- Order history in the dashboard shows only orders placed in that same browser.
-- No payments, no shipping integration, no inventory sync.
-- The Cairo font is bundled in `docs/fonts/`, so the shop makes no third-party requests.
+## Honest limits and privacy
+
+- Opening a WhatsApp draft is not sending. The customer presses send, and the order is not confirmed until the shop replies. The app records no orders.
+- Totals use the shop prices in the catalog. There is no shipping, tax, discount code or payment; the shop confirms the final price.
+- Messenger orders need a paste step. Instagram has no prefilled-message link, so the Instagram link only opens your profile.
+- Product photos are resized in the browser and embedded in the exported file; many photos make `catalog-data.js` large. Relative image paths such as `img/photo.jpg` also work if you commit the image.
+- Static and device-local: the owner draft does not sync between devices. Clearing site data erases it, so export first.
+- No customer data is collected or stored; the optional name and note go only into the WhatsApp message the customer sends.
+- Contrast of the default theme pairs is checked; no blanket WCAG claim.
 
 ## License
-MIT, see [LICENSE](LICENSE).
 
-## Round 2 review notes
-- Importing a shop file now asks before replacing the current shop; a full or blocked browser storage shows a message instead of failing silently.
-- Already solid in review: settings sanitiser, local 01x numbers get the country code, copy fallback, empty states.
-- Limit: WhatsApp links are only verified as generated wa.me URLs.
+MIT, copyright Yousef Khames. See `LICENSE`. Cairo font: SIL OFL. `assets/qrcode.js`: qrcode-generator by Kazuhiko Arase (MIT, `assets/qrcode.LICENSE.txt`).
