@@ -1,3 +1,21 @@
+<div align="center">
+
+<img src="assets/yk-logo.svg" width="64" alt="YK">
+
+# talab
+
+**talab** · demo / portfolio project
+
+**متجر مصغّر للبائعين على السوشيال** · مشروع تجريبي للعرض
+
+[Live demo](https://yousefkhames.github.io/talab/) · By Yousef Khames · من تطوير يوسف خميس
+
+<img src="assets/og.png" width="640" alt="talab preview">
+
+</div>
+
+---
+
 # talab · طلب
 
 A white-label mini storefront for sellers who sell through Instagram and Facebook: a profile header with social links, a single-column product feed, a page and share link for every product, QR code, and order drafts through WhatsApp or Messenger. Arabic RTL and English LTR. Static HTML, CSS and JavaScript; no build, account, API or payment processor.
